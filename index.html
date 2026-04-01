@@ -301,7 +301,7 @@ function render(){
       <div class="rest-icon">ð´</div>
       <div class="rest-title">Descanso</div>
       <div class="rest-sub">RecuperaÃ§Ã£o Ã© parte do treino</div>
-      ${sch.run==='reg'?`<div class="rest-opt">ð Regenerativa 4k disponÃvel se quiser</div>`:''}
+      ${sch.run==='reg'?`<div class="rest-opt">ð Regenerativa 4k disponÃ­vel se quiser</div>`:''}
     </div>`;
   } else {
     if(gymW){
@@ -349,7 +349,7 @@ function render(){
     }
   }
 
-  Stats
+  // Stats
   html+=`<div class="stats">
     <div class="stat-card"><div class="stat-num">${streak}</div><div class="stat-lbl">Streak</div></div>
     <div class="stat-card"><div class="stat-num">${stats.gym}</div><div class="stat-lbl">Academia</div></div>
@@ -367,8 +367,6 @@ function toggleEx(t){
 
 init();
 </script>
-//{}
-
 </body>
 </html>
 
