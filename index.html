@@ -103,73 +103,73 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,system-ui,
 <div id="app"></div>
 
 <script>
-const DAYS=['Dom','Seg','Ter','Qua','Qui','Sex','SÃ¡b'];
+const DAYS=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const MONTHS=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 const SHORT=['D','S','T','Q','Q','S','S'];
 
 const GYM={
-  A:{label:'Treino A',name:'Peito + TrÃ­ceps',dur:'60 min',tag:'Academia',color:'var(--blue)',exs:[
-    {n:'A3',name:'Supino halteres banco plano',sets:'4Ã8-12',load:'8-12 kg'},
-    {n:'A4',name:'Crucifixo halteres',sets:'3Ã12',load:'4-8 kg'},
-    {n:'A5',name:'FlexÃ£o declinada no espaldar',sets:'3Ã10-15',load:'corpo'},
-    {n:'A6',name:'Supino inclinado halteres',sets:'3Ã10-12',load:'6-10 kg'},
-    {n:'A7',name:'Pullover com halter',sets:'3Ã12',load:'6-10 kg'},
-    {n:'A8',name:'TrÃ­ceps banco (dips)',sets:'4Ã12-15',load:'corpo'},
-    {n:'A9',name:'TrÃ­ceps testa halteres',sets:'3Ã12',load:'4-6 kg'},
-    {n:'A10',name:'ExtensÃ£o trÃ­ceps TRX',sets:'3Ã12-15',load:'Ã¢ngulo'},
-    {n:'A11',name:'Kickback com halter',sets:'3Ã15',load:'3-6 kg'},
-    {n:'A12',name:'FlexÃ£o atÃ© a falha',sets:'2Ãmax',load:'corpo'},
+  A:{label:'Treino A',name:'Peito + Tríceps',dur:'60 min',tag:'Academia',color:'var(--blue)',exs:[
+    {n:'A3',name:'Supino halteres banco plano',sets:'4×8-12',load:'8-12 kg'},
+    {n:'A4',name:'Crucifixo halteres',sets:'3×12',load:'4-8 kg'},
+    {n:'A5',name:'Flexão declinada no espaldar',sets:'3×10-15',load:'corpo'},
+    {n:'A6',name:'Supino inclinado halteres',sets:'3×10-12',load:'6-10 kg'},
+    {n:'A7',name:'Pullover com halter',sets:'3×12',load:'6-10 kg'},
+    {n:'A8',name:'Tríceps banco (dips)',sets:'4×12-15',load:'corpo'},
+    {n:'A9',name:'Tríceps testa halteres',sets:'3×12',load:'4-6 kg'},
+    {n:'A10',name:'Extensão tríceps TRX',sets:'3×12-15',load:'ângulo'},
+    {n:'A11',name:'Kickback com halter',sets:'3×15',load:'3-6 kg'},
+    {n:'A12',name:'Flexão até a falha',sets:'2×max',load:'corpo'},
   ]},
-  B:{label:'Treino B',name:'Costas + BÃ­ceps',dur:'65 min',tag:'Academia',color:'var(--blue)',exs:[
-    {n:'B3',name:'Remada curvada com barra',sets:'4Ã8-10',load:'20-40 kg'},
-    {n:'B4',name:'Remada unilateral halter',sets:'3Ã10-12',load:'8-14 kg'},
-    {n:'B5',name:'Remada TRX (inverted row)',sets:'3Ã12-15',load:'Ã¢ngulo'},
-    {n:'B6',name:'Pullover halter (costas)',sets:'3Ã12',load:'8-12 kg'},
-    {n:'B7',name:'HiperextensÃ£o no espaldar',sets:'3Ã15',load:'corpo'},
-    {n:'B8',name:'Remada alta halteres',sets:'3Ã12',load:'6-10 kg'},
-    {n:'B9',name:'Rosca direta halteres',sets:'4Ã10-12',load:'6-12 kg'},
-    {n:'B10',name:'Rosca martelo alternada',sets:'3Ã12',load:'6-10 kg'},
-    {n:'B11',name:'Rosca concentrada',sets:'3Ã12-15',load:'4-8 kg'},
-    {n:'B13',name:'Rosca 21s halteres',sets:'2Ã21',load:'4-8 kg'},
+  B:{label:'Treino B',name:'Costas + Bíceps',dur:'65 min',tag:'Academia',color:'var(--blue)',exs:[
+    {n:'B3',name:'Remada curvada com barra',sets:'4×8-10',load:'20-40 kg'},
+    {n:'B4',name:'Remada unilateral halter',sets:'3×10-12',load:'8-14 kg'},
+    {n:'B5',name:'Remada TRX (inverted row)',sets:'3×12-15',load:'ângulo'},
+    {n:'B6',name:'Pullover halter (costas)',sets:'3×12',load:'8-12 kg'},
+    {n:'B7',name:'Hiperextensão no espaldar',sets:'3×15',load:'corpo'},
+    {n:'B8',name:'Remada alta halteres',sets:'3×12',load:'6-10 kg'},
+    {n:'B9',name:'Rosca direta halteres',sets:'4×10-12',load:'6-12 kg'},
+    {n:'B10',name:'Rosca martelo alternada',sets:'3×12',load:'6-10 kg'},
+    {n:'B11',name:'Rosca concentrada',sets:'3×12-15',load:'4-8 kg'},
+    {n:'B13',name:'Rosca 21s halteres',sets:'2×21',load:'4-8 kg'},
   ]},
   C:{label:'Treino C',name:'Ombros + Core',dur:'65 min',tag:'Academia',color:'var(--blue)',exs:[
-    {n:'C3',name:'Desenvolvimento halteres',sets:'4Ã10-12',load:'6-12 kg'},
-    {n:'C4',name:'ElevaÃ§Ã£o lateral halteres',sets:'3Ã15',load:'3-6 kg'},
-    {n:'C5',name:'ElevaÃ§Ã£o frontal alternada',sets:'3Ã12',load:'3-6 kg'},
-    {n:'C6',name:'Shrugs com halteres',sets:'3Ã15',load:'10-16 kg'},
-    {n:'C7',name:'Swing kettlebell',sets:'4Ã20',load:'8-12 kg'},
-    {n:'C9',name:'Prancha frontal',sets:'3Ã45-60s',load:''},
-    {n:'C10',name:'Prancha lateral c/ elevaÃ§Ã£o',sets:'3Ã30s/lado',load:''},
-    {n:'C11',name:'Crunch com bola medicinal',sets:'3Ã20',load:'3 kg'},
-    {n:'C12',name:'Mountain climber',sets:'3Ã40s',load:''},
-    {n:'C14',name:'Swing + thruster KB circuito',sets:'3Ã10+10',load:'6-10 kg'},
+    {n:'C3',name:'Desenvolvimento halteres',sets:'4×10-12',load:'6-12 kg'},
+    {n:'C4',name:'Elevação lateral halteres',sets:'3×15',load:'3-6 kg'},
+    {n:'C5',name:'Elevação frontal alternada',sets:'3×12',load:'3-6 kg'},
+    {n:'C6',name:'Shrugs com halteres',sets:'3×15',load:'10-16 kg'},
+    {n:'C7',name:'Swing kettlebell',sets:'4×20',load:'8-12 kg'},
+    {n:'C9',name:'Prancha frontal',sets:'3×45-60s',load:''},
+    {n:'C10',name:'Prancha lateral c/ elevação',sets:'3×30s/lado',load:''},
+    {n:'C11',name:'Crunch com bola medicinal',sets:'3×20',load:'3 kg'},
+    {n:'C12',name:'Mountain climber',sets:'3×40s',load:''},
+    {n:'C14',name:'Swing + thruster KB circuito',sets:'3×10+10',load:'6-10 kg'},
   ]},
 };
 
 const RUN={
-  leve:{label:'Corrida Leve',name:'6 km',dur:'43 min',pace:'6:30â7:00/km',tag:'Corrida',color:'var(--teal)',steps:[
-    {name:'Aquecimento trote',type:'warmup',info:'8 min Â· 7:00â7:30/km'},
-    {name:'Ritmo fÃ¡cil',type:'run',info:'5 km Â· 6:30â7:00/km'},
-    {name:'Desaquecimento',type:'cool',info:'5 min Â· 7:00â8:00/km'},
+  leve:{label:'Corrida Leve',name:'6 km',dur:'43 min',pace:'6:30–7:00/km',tag:'Corrida',color:'var(--teal)',steps:[
+    {name:'Aquecimento trote',type:'warmup',info:'8 min · 7:00–7:30/km'},
+    {name:'Ritmo fácil',type:'run',info:'5 km · 6:30–7:00/km'},
+    {name:'Desaquecimento',type:'cool',info:'5 min · 7:00–8:00/km'},
   ]},
   tempo:{label:'Tempo Run',name:'7 km',dur:'47 min',pace:'5:30/km',tag:'Corrida',color:'var(--teal)',steps:[
-    {name:'Aquecimento',type:'warmup',info:'10 min Â· 6:30â7:30/km'},
-    {name:'Progressivo',type:'interval',info:'1 km Â· 5:50â6:20/km'},
-    {name:'Tempo pace',type:'interval',info:'3 km Â· 5:15â5:45/km'},
-    {name:'RecuperaÃ§Ã£o ativa',type:'recovery',info:'3 min Â· livre'},
-    {name:'Desaquecimento',type:'cool',info:'7 min Â· 6:30â7:30/km'},
+    {name:'Aquecimento',type:'warmup',info:'10 min · 6:30–7:30/km'},
+    {name:'Progressivo',type:'interval',info:'1 km · 5:50–6:20/km'},
+    {name:'Tempo pace',type:'interval',info:'3 km · 5:15–5:45/km'},
+    {name:'Recuperação ativa',type:'recovery',info:'3 min · livre'},
+    {name:'Desaquecimento',type:'cool',info:'7 min · 6:30–7:30/km'},
   ]},
-  longao:{label:'LongÃ£o',name:'11 km',dur:'78 min',pace:'6:30â7:00/km',tag:'Corrida',color:'var(--teal)',steps:[
-    {name:'Aquecimento trote',type:'warmup',info:'8 min Â· 7:00â8:00/km'},
-    {name:'Ritmo confortÃ¡vel',type:'run',info:'5 km Â· 6:30â7:00/km'},
-    {name:'Ritmo mantido',type:'run',info:'3 km Â· 6:15â6:45/km'},
-    {name:'Progressivo final',type:'interval',info:'2 km Â· 5:50â6:30/km'},
-    {name:'Desaquecimento',type:'cool',info:'8 min Â· 7:00â8:00/km'},
+  longao:{label:'Longão',name:'11 km',dur:'78 min',pace:'6:30–7:00/km',tag:'Corrida',color:'var(--teal)',steps:[
+    {name:'Aquecimento trote',type:'warmup',info:'8 min · 7:00–8:00/km'},
+    {name:'Ritmo confortável',type:'run',info:'5 km · 6:30–7:00/km'},
+    {name:'Ritmo mantido',type:'run',info:'3 km · 6:15–6:45/km'},
+    {name:'Progressivo final',type:'interval',info:'2 km · 5:50–6:30/km'},
+    {name:'Desaquecimento',type:'cool',info:'8 min · 7:00–8:00/km'},
   ]},
-  reg:{label:'Regenerativa',name:'4 km',dur:'35 min',pace:'7:00â7:30/km',tag:'Corrida',optional:true,color:'var(--teal)',steps:[
-    {name:'Aquecimento caminhada',type:'warmup',info:'5 min Â· 8:00â9:00/km'},
-    {name:'Ritmo regenerativo',type:'run',info:'3.5 km Â· 7:00â7:45/km'},
-    {name:'Desaquecimento',type:'cool',info:'5 min Â· 7:30â9:00/km'},
+  reg:{label:'Regenerativa',name:'4 km',dur:'35 min',pace:'7:00–7:30/km',tag:'Corrida',optional:true,color:'var(--teal)',steps:[
+    {name:'Aquecimento caminhada',type:'warmup',info:'5 min · 8:00–9:00/km'},
+    {name:'Ritmo regenerativo',type:'run',info:'3.5 km · 7:00–7:45/km'},
+    {name:'Desaquecimento',type:'cool',info:'5 min · 7:30–9:00/km'},
   ]},
 };
 
@@ -270,12 +270,12 @@ function render(){
   let html=`<div class="hdr">
     <div class="hdr-left">
       <div class="date">${isToday?'Hoje, ':''}${DAYS[dow]}, ${sel.getDate()} ${MONTHS[sel.getMonth()]}</div>
-      ${streak>0?`<div class="streak">ð¥ ${streak} dia${streak>1?'s':''} seguidos</div>`:''}
+      ${streak>0?`<div class="streak">🔥 ${streak} dia${streak>1?'s':''} seguidos</div>`:''}
     </div>
     <div class="nav-btns">
-      <button class="nav-btn" onclick="navigate(-1)">â¹</button>
+      <button class="nav-btn" onclick="navigate(-1)">‹</button>
       ${!isToday?`<button class="nav-btn today-btn" onclick="navigate(${Math.round((today-sel)/86400000)})">hoje</button>`:''}
-      <button class="nav-btn" onclick="navigate(1)">âº</button>
+      <button class="nav-btn" onclick="navigate(1)">›</button>
     </div>
   </div>`;
 
@@ -298,10 +298,10 @@ function render(){
 
   if(isRest){
     html+=`<div class="rest-card">
-      <div class="rest-icon">ð´</div>
+      <div class="rest-icon">😴</div>
       <div class="rest-title">Descanso</div>
-      <div class="rest-sub">RecuperaÃ§Ã£o Ã© parte do treino</div>
-      ${sch.run==='reg'?`<div class="rest-opt">ð Regenerativa 4k disponÃ­vel se quiser</div>`:''}
+      <div class="rest-sub">Recuperação é parte do treino</div>
+      ${sch.run==='reg'?`<div class="rest-opt">🏃 Regenerativa 4k disponível se quiser</div>`:''}
     </div>`;
   } else {
     if(gymW){
@@ -309,13 +309,13 @@ function render(){
       html+=`<div class="wcard${dn?' done':''}" style="border-left-color:${gymW.color}">
         <div class="card-top">
           <div class="${dn?'wdone':''}">
-            <div class="wtag" style="color:${gymW.color}">${gymW.tag} Â· ${gymW.label}</div>
+            <div class="wtag" style="color:${gymW.color}">${gymW.tag} · ${gymW.label}</div>
             <div class="wtitle">${gymW.name}</div>
-            <div class="wmeta">â± ${gymW.dur} Â· ${gymW.exs.length} exercÃ­cios</div>
+            <div class="wmeta">⏱ ${gymW.dur} · ${gymW.exs.length} exercícios</div>
           </div>
-          <button class="done-btn${dn?' checked':''}" onclick="toggle('gym')">${dn?'â':'â'}</button>
+          <button class="done-btn${dn?' checked':''}" onclick="toggle('gym')">${dn?'✓':'○'}</button>
         </div>
-        <button class="expand-btn" onclick="toggleEx('G')">${state.exG?'â² Fechar':'â¼ Ver exercÃ­cios'}</button>
+        <button class="expand-btn" onclick="toggleEx('G')">${state.exG?'▲ Fechar':'▼ Ver exercícios'}</button>
         ${state.exG?`<div class="ex-list">${gymW.exs.map(ex=>`
           <div class="ex-row">
             <span class="ex-num">${ex.n}</span>
@@ -330,13 +330,13 @@ function render(){
       html+=`<div class="wcard${dn?' done':''}" style="border-left-color:${runW.color}">
         <div class="card-top">
           <div class="${dn?'wdone':''}">
-            <div class="wtag" style="color:${runW.color}">${runW.tag} Â· ${runW.label}${runW.optional?' Â· opcional':''}</div>
+            <div class="wtag" style="color:${runW.color}">${runW.tag} · ${runW.label}${runW.optional?' · opcional':''}</div>
             <div class="wtitle">${runW.name}</div>
-            <div class="wmeta">â± ${runW.dur} Â· ð ${runW.pace}</div>
+            <div class="wmeta">⏱ ${runW.dur} · 🏃 ${runW.pace}</div>
           </div>
-          <button class="done-btn${dn?' checked':''}" onclick="toggle('run')">${dn?'â':'â'}</button>
+          <button class="done-btn${dn?' checked':''}" onclick="toggle('run')">${dn?'✓':'○'}</button>
         </div>
-        <button class="expand-btn" onclick="toggleEx('R')">${state.exR?'â² Fechar':'â¼ Ver etapas'}</button>
+        <button class="expand-btn" onclick="toggleEx('R')">${state.exR?'▲ Fechar':'▼ Ver etapas'}</button>
         ${state.exR?`<div class="step-list">${runW.steps.map(st=>`
           <div class="step-row">
             <div class="step-bar" style="background:${STCOL[st.type]||'#666'}"></div>
@@ -369,4 +369,3 @@ init();
 </script>
 </body>
 </html>
-
