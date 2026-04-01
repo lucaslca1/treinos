@@ -111,6 +111,19 @@ body{padding-bottom:80px}
 .notes-area::placeholder{color:var(--text3)}
 .prog-hint{background:rgba(139,122,255,.08);border:1px solid rgba(139,122,255,.2);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:13px;color:var(--accent)}
 .toggle-all{background:none;border:1px solid var(--border);border-radius:8px;padding:6px 14px;color:var(--text2);font-family:'Outfit';font-size:12px;cursor:pointer;margin-bottom:10px}
+.week-summary{margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
+.week-summary h3{font-size:14px;font-weight:600;color:var(--text2);margin-bottom:10px}
+.ws-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(42,42,53,.3)}
+.ws-row:last-child{border-bottom:none}
+.ws-day{font-size:12px;color:var(--text3);width:32px;flex-shrink:0}
+.ws-day.ws-today{color:var(--accent);font-weight:600}
+.ws-label{font-size:13px;flex:1}
+.ws-done{color:var(--green);font-size:14px}
+.ws-tags{display:flex;gap:4px}
+.ws-tag{font-size:10px;padding:2px 8px;border-radius:6px}
+.ws-tag.gym-tag{background:rgba(139,122,255,.12);color:var(--accent)}
+.ws-tag.run-tag{background:rgba(251,191,36,.1);color:var(--amber)}
+.ws-tag.rest-tag{background:rgba(92,92,110,.15);color:var(--text3)}
 </style>
 </head>
 <body>
@@ -128,7 +141,14 @@ body{padding-bottom:80px}
   <button class="complete-btn" id="complete-btn" onclick="completeWorkout()">Marcar treino como concluído</button>
 </div>
 <div class="screen" id="screen-week">
-  <div class="header"><h1>Semana</h1><p id="week-range"></p></div>
+  <div class="header" style="display:flex;justify-content:space-between;align-items:center">
+    <div><h1>Semana</h1><p id="week-range"></p></div>
+    <div style="display:flex;gap:8px">
+      <button onclick="navWeek(-1)" style="background:var(--card);border:1px solid var(--border);border-radius:10px;width:36px;height:36px;color:var(--text);font-size:18px;cursor:pointer">←</button>
+      <button onclick="navWeek(0)" id="week-today-btn" style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:0 12px;height:36px;color:var(--text2);font-family:Outfit;font-size:12px;cursor:pointer;display:none">hoje</button>
+      <button onclick="navWeek(1)" style="background:var(--card);border:1px solid var(--border);border-radius:10px;width:36px;height:36px;color:var(--text);font-size:18px;cursor:pointer">→</button>
+    </div>
+  </div>
   <div class="meso-pill" id="meso-pill-week" onclick="showMesoModal()"><span class="dot"></span><span class="week" id="meso-week2">Semana 1</span><span class="label">de 4 · Mesociclo</span></div>
   <div class="week-grid" id="week-grid"></div>
 </div>
@@ -243,7 +263,7 @@ const SCHED=[{day:'Dom',type:'rest',label:'Regenerativa',sub:'opcional',gym:null
 const MESO_H=['Semana 1 — Base: pesos default. Última rep difícil, forma perfeita.','Semana 2 — Subida: +1-2 reps por série, mesmo peso.','Semana 3 — Pico: +2,5kg compostos ou reps no topo da faixa.','Semana 4 — Deload: -40% peso, apenas 2 séries. Recupere.'];
 const FB_L={heavy:'😤 Pesado',good:'👌 Bom',light:'🔥 Leve'};
 const today=new Date(),todayStr=fmt(today);
-let cur=null,timerI=null,timerS=0,timerT=0,allExpanded=false,swapTarget=null;
+let cur=null,timerI=null,timerS=0,timerT=0,allExpanded=false,swapTarget=null,weekOff=0;
 
 function fmt(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function wkStart(d){const t=new Date(d);t.setDate(t.getDate()-t.getDay());t.setHours(0,0,0,0);return t}
@@ -302,7 +322,16 @@ function streak(){let s=0;const d=new Date(today);for(let i=0;i<365;i++){const d
 
 function sw(n,b){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+n).classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));if(b)b.classList.add('active');if(n==='today')rToday();if(n==='week')rWeek();if(n==='history')rHist()}
 
-function rToday(){const h=today.getHours();document.getElementById('greeting').textContent=(h<12?'Bom dia':h<18?'Boa tarde':'Boa noite')+' 💪';document.getElementById('today-date').textContent=today.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});updMeso(mesoWk());const sc=SCHED[today.getDay()];let html='';if(sc.type==='rest')html+=mkCard(null,sc.label,sc.sub,'rest',todayStr);else{if(sc.gym){const w=EX[sc.gym];html+=mkCard(sc.gym,w.name,w.sub,'gym',todayStr)}if(sc.run){const r=RUNS[sc.run];html+=mkCard(sc.run,r.name,r.dist+' · '+r.pace,'run',todayStr,1)}}document.getElementById('today-workouts').innerHTML=html}
+function rToday(){const h=today.getHours();document.getElementById('greeting').textContent=(h<12?'Bom dia':h<18?'Boa tarde':'Boa noite')+' 💪';document.getElementById('today-date').textContent=today.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});updMeso(mesoWk());const sc=SCHED[today.getDay()];let html='';if(sc.type==='rest')html+=mkCard(null,sc.label,sc.sub,'rest',todayStr);else{if(sc.gym){const w=EX[sc.gym];html+=mkCard(sc.gym,w.name,w.sub,'gym',todayStr)}if(sc.run){const r=RUNS[sc.run];html+=mkCard(sc.run,r.name,r.dist+' · '+r.pace,'run',todayStr,1)}}
+  html+=`<div class="week-summary"><h3>Sua semana</h3>`;
+  const ws=wkStart(today);
+  for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(d.getDate()+i);const ds=fmt(d),s=SCHED[d.getDay()],dn=isDone(ds);const isT=ds===todayStr;
+    let tags='';
+    if(s.type==='rest')tags=`<span class="ws-tag rest-tag">${s.label}</span>`;
+    else{if(s.gym)tags+=`<span class="ws-tag gym-tag">${EX[s.gym].sub}</span>`;if(s.run)tags+=`<span class="ws-tag run-tag">${RUNS[s.run].dist}</span>`}
+    html+=`<div class="ws-row"><span class="ws-day${isT?' ws-today':''}">${s.day}</span><div class="ws-tags">${tags}</div>${dn?'<span class="ws-done">✓</span>':''}</div>`}
+  html+=`</div>`;
+  document.getElementById('today-workouts').innerHTML=html}
 
 function mkCard(id,t,s,bg,ds,isR){const dn=isDone(ds),oc=id&&!isR?` onclick="openD('${id}','${ds}')"`:(id&&isR?` onclick="openR('${id}','${ds}')"`:``);const ar=id?'<span class="wc-arrow">→</span>':'';const badge=dn?'<span class="wc-badge done-badge">Concluído</span>':`<span class="wc-badge ${bg}">${bg==='gym'?'Musculação':bg==='run'?'Corrida':'Descanso'}</span>`;return`<div class="workout-card${dn?' done':''}"${oc}><div class="wc-top">${badge}${ar}</div><div class="wc-title">${t}</div><div class="wc-sub">${s}</div></div>`}
 
@@ -358,7 +387,8 @@ function updMeso(w){const d=w===4;['meso-pill','meso-pill-week'].forEach(id=>{co
 function showMesoModal(){document.getElementById('meso-status').textContent=`Semana ${mesoWk()}. Início: ${mesoStart().split('-').reverse().join('/')}`;document.getElementById('meso-modal').classList.add('show')}
 function closeMesoModal(){document.getElementById('meso-modal').classList.remove('show')}
 function resetMeso(){setMesoSt(todayStr);closeMesoModal();rToday()}
-function rWeek(){const ws=wkStart(today),we=new Date(ws);we.setDate(we.getDate()+6);document.getElementById('week-range').textContent=ws.toLocaleDateString('pt-BR',{day:'numeric',month:'short'})+' — '+we.toLocaleDateString('pt-BR',{day:'numeric',month:'short'});updMeso(mesoWk());let html='';for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(d.getDate()+i);const ds=fmt(d),sc=SCHED[d.getDay()];const isT=ds===todayStr,dn=isDone(ds);let cls='week-day';if(isT)cls+=' today';if(dn)cls+=' done';html+=`<div class="${cls}" onclick="openFromWk('${ds}',${d.getDay()})"><div class="wd-name">${sc.day}</div><div class="wd-num">${d.getDate()}</div><div class="wd-type">${sc.label}</div></div>`}document.getElementById('week-grid').innerHTML=html}
+function navWeek(n){if(n===0)weekOff=0;else weekOff+=n;rWeek()}
+function rWeek(){const base=new Date(today);base.setDate(base.getDate()+weekOff*7);const ws=wkStart(base),we=new Date(ws);we.setDate(we.getDate()+6);document.getElementById('week-range').textContent=ws.toLocaleDateString('pt-BR',{day:'numeric',month:'short'})+' — '+we.toLocaleDateString('pt-BR',{day:'numeric',month:'short'});document.getElementById('week-today-btn').style.display=weekOff===0?'none':'block';updMeso(mesoWk());let html='';for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(d.getDate()+i);const ds=fmt(d),sc=SCHED[d.getDay()];const isT=ds===todayStr,dn=isDone(ds);let cls='week-day';if(isT)cls+=' today';if(dn)cls+=' done';html+=`<div class="${cls}" onclick="openFromWk('${ds}',${d.getDay()})"><div class="wd-name">${sc.day}</div><div class="wd-num">${d.getDate()}</div><div class="wd-type">${sc.label}</div></div>`}document.getElementById('week-grid').innerHTML=html}
 function openFromWk(ds,dow){const s=SCHED[dow];if(s.gym)openD(s.gym,ds);else if(s.run)openR(s.run,ds)}
 function rHist(){document.getElementById('streak-num').textContent=streak();let html='';for(let m=0;m<3;m++){const mo=new Date(today.getFullYear(),today.getMonth()-m,1);html+=`<div class="history-month">${mo.toLocaleDateString('pt-BR',{month:'long',year:'numeric'})}</div><div class="cal-grid">`;['D','S','T','Q','Q','S','S'].forEach(d=>html+=`<div class="cal-head">${d}</div>`);const fd=new Date(mo.getFullYear(),mo.getMonth(),1).getDay();for(let i=0;i<fd;i++)html+='<div class="cal-day"></div>';const dim=new Date(mo.getFullYear(),mo.getMonth()+1,0).getDate();for(let d=1;d<=dim;d++){const dt=new Date(mo.getFullYear(),mo.getMonth(),d),ds=fmt(dt);const dn=isDone(ds),isT=ds===todayStr,hw=SCHED[dt.getDay()].type!=='rest';let c='cal-day';if(dn)c+=' done-day';else if(hw)c+=' has-workout';if(isT)c+=' today-cal';html+=`<div class="${c}">${d}</div>`}html+='</div>'}document.getElementById('calendar-area').innerHTML=html}
 function toggleExport(){const a=document.getElementById('export-area');if(a.classList.contains('show')){a.classList.remove('show');return}const ws=wkStart(today);const swaps=getSwaps();let r=`📊 RELATÓRIO SEMANAL — Mesociclo Semana ${mesoWk()}\n`;r+=`${ws.toLocaleDateString('pt-BR',{day:'numeric',month:'short'})} a ${new Date(ws.getTime()+6*864e5).toLocaleDateString('pt-BR',{day:'numeric',month:'short'})}\n`;
