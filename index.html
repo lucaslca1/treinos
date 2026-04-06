@@ -103,7 +103,7 @@ body{padding-bottom:80px}
 .swap-name{font-size:14px;font-weight:500}.swap-info{font-size:12px;color:var(--text3)}
 .swap-badge{font-size:10px;color:var(--accent);background:rgba(139,122,255,.15);padding:2px 8px;border-radius:6px}
 .eq-filters{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
-.eq-filter{padding:5px 12px;border-radius:8px;border:1px solid var(--border);background:var(--card2);font-family:'Outfit';font-size:12px;color:var(--text2);cursor:pointer}
+.eq-filter{padding:5px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card2);font-family:'Outfit';font-size:11px;color:var(--text2);cursor:pointer}
 .eq-filter.active{border-color:var(--accent);color:var(--accent);background:rgba(139,122,255,.1)}
 .eq-tag{font-size:9px;padding:1px 6px;border-radius:4px;margin-left:6px}
 .eq-tag.livre{background:rgba(96,165,250,.12);color:var(--blue)}
@@ -184,10 +184,10 @@ body{padding-bottom:80px}
   <div id="calendar-area"></div>
 </div>
 <div class="timer-bar" id="timer-bar"><div><div class="timer-time" id="timer-time">0:00</div><div style="font-size:13px;color:var(--text2)">Descanso</div></div><button class="timer-btn" onclick="stopT()">Parar</button><div class="timer-progress" id="timer-progress"></div></div>
-<div class="modal-overlay" id="meso-modal"><div class="modal"><h3>Mesociclo</h3><p class="modal-sub">4 semanas: 3 subindo carga + 1 deload.<br><span id="meso-status"></span></p><button class="modal-btn primary" onclick="resetMeso()">Iniciar novo mesociclo (hoje)</button><button class="modal-cancel" onclick="closeMesoModal()">Cancelar</button></div></div>
-<div class="modal-overlay" id="swap-modal"><div class="modal"><h3 id="swap-title">Trocar exercício</h3><p class="modal-sub" id="swap-sub"></p><div class="eq-filters" id="swap-filters"></div><div id="swap-list"></div><button class="modal-cancel" onclick="closeSwapModal()">Cancelar</button></div></div>
-<div class="modal-overlay" id="add-modal"><div class="modal"><h3>Adicionar exercício</h3><p class="modal-sub">Escolha o grupo muscular</p><div id="add-step1"></div><div id="add-step2" style="display:none"><p class="modal-sub" id="add-grp-name"></p><div class="eq-filters" id="add-filters"></div><div id="add-list"></div><button class="modal-cancel" onclick="addStep1()">← Voltar</button></div><button class="modal-cancel" onclick="closeAddModal()">Cancelar</button></div></div>
-<div class="modal-overlay" id="sched-modal"><div class="modal"><h3>Editar grade semanal</h3><p class="modal-sub">Configure musculação e corrida para cada dia</p><div id="sched-rows"></div><button class="modal-btn primary" onclick="saveSched()">Salvar grade</button><button class="sched-reset" onclick="resetSched()">Restaurar grade original</button><button class="modal-cancel" onclick="closeSchedEditor()">Cancelar</button></div></div>
+<div class="modal-overlay" id="meso-modal" onclick="closeMesoModal()"><div class="modal" onclick="event.stopPropagation()"><h3>Mesociclo</h3><p class="modal-sub">4 semanas: 3 subindo carga + 1 deload.<br><span id="meso-status"></span></p><button class="modal-btn primary" onclick="resetMeso()">Iniciar novo mesociclo (hoje)</button><button class="modal-cancel" onclick="closeMesoModal()">Cancelar</button></div></div>
+<div class="modal-overlay" id="swap-modal" onclick="closeSwapModal()"><div class="modal" onclick="event.stopPropagation()"><h3 id="swap-title">Trocar exercício</h3><p class="modal-sub" id="swap-sub"></p><div class="eq-filters" id="swap-grp-tabs" style="margin-bottom:8px"></div><div class="eq-filters" id="swap-filters"></div><div id="swap-list"></div><button class="modal-cancel" onclick="closeSwapModal()">Cancelar</button></div></div>
+<div class="modal-overlay" id="add-modal" onclick="closeAddModal()"><div class="modal" onclick="event.stopPropagation()"><h3>Adicionar exercício</h3><p class="modal-sub">Escolha o grupo muscular</p><div id="add-step1"></div><div id="add-step2" style="display:none"><p class="modal-sub" id="add-grp-name"></p><div class="eq-filters" id="add-filters"></div><div id="add-list"></div><button class="modal-cancel" onclick="addStep1()">← Voltar</button></div><button class="modal-cancel" onclick="closeAddModal()">Cancelar</button></div></div>
+<div class="modal-overlay" id="sched-modal" onclick="closeSchedEditor()"><div class="modal" onclick="event.stopPropagation()"><h3>Editar grade semanal</h3><p class="modal-sub">Configure musculação e corrida para cada dia</p><div id="sched-rows"></div><button class="modal-btn primary" onclick="saveSched()">Salvar grade</button><button class="sched-reset" onclick="resetSched()">Restaurar grade original</button><button class="modal-cancel" onclick="closeSchedEditor()">Cancelar</button></div></div>
 <nav class="nav">
   <button class="active" onclick="sw('today',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Hoje</button>
   <button onclick="sw('week',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>Semana</button>
@@ -322,17 +322,20 @@ function saveSwap(exId,newName,newDef,newUnit){
 }
 function getEx(ex){
   const s=getSwaps();
-  if(s[ex.id])return{...ex,name:s[ex.id].name,defKg:s[ex.id].defKg,unit:s[ex.id].unit,swapped:true};
+  if(s[ex.id])return{...ex,name:s[ex.id].name,defKg:s[ex.id].defKg,unit:s[ex.id].unit,grp:s[ex.id].grp||ex.grp,swapped:true};
   return ex;
 }
 function openSwapModal(exId,grp){
   swapTarget=exId;swapGrp=grp;swapFilter='todos';
-  const cat=CAT[grp];if(!cat)return;
   const current=getEx(EX.A.exercises.concat(EX.B.exercises,EX.C.exercises).find(e=>e.id===exId));
   document.getElementById('swap-title').textContent='Trocar: '+current.name;
-  document.getElementById('swap-sub').textContent=cat.name+' · toque para selecionar';
-  renderSwapFilters();renderSwapList(cat,current.name);
+  document.getElementById('swap-sub').textContent='Toque para selecionar';
+  renderSwapGrpTabs();renderSwapFilters();renderSwapList(CAT[swapGrp],current.name);
   document.getElementById('swap-modal').classList.add('show');
+}
+function renderSwapGrpTabs(){
+  const el=document.getElementById('swap-grp-tabs');
+  el.innerHTML=Object.entries(CAT).map(([k,v])=>`<button class="eq-filter${swapGrp===k?' active':''}" onclick="swapGrp='${k}';swapFilter='todos';renderSwapGrpTabs();renderSwapFilters();renderSwapList(CAT['${k}'],'')">${v.name}</button>`).join('');
 }
 function renderSwapFilters(){
   const f=document.getElementById('swap-filters');
@@ -355,8 +358,8 @@ var swapGrp='',swapFilter='todos',addFilter='todos',addGrp='';
 function doSwap(exId,name,defKg,unit){
   const orig=EX.A.exercises.concat(EX.B.exercises,EX.C.exercises).find(e=>e.id===exId);
   const s=getSwaps();
-  if(orig&&orig.name===name){delete s[exId];sv('treino:swaps',s)}
-  else{s[exId]={name,defKg,unit};sv('treino:swaps',s)}
+  if(orig&&orig.name===name&&orig.grp===swapGrp){delete s[exId];sv('treino:swaps',s)}
+  else{s[exId]={name,defKg,unit,grp:swapGrp};sv('treino:swaps',s)}
   closeSwapModal();if(cur)openD(cur.gid,cur.ds);
 }
 function closeSwapModal(){document.getElementById('swap-modal').classList.remove('show')}
@@ -468,7 +471,7 @@ function openD(gid,ds){
     let setsH='';for(let i=0;i<sc;i++){const saved=log.weights&&log.weights[ex.id]&&log.weights[ex.id][i];const val=saved!=null?saved:(pr&&pr.w[i]?pr.w[i]:'');if(isBW)setsH+=`<div class="set-input"><span class="set-label">Série ${i+1}</span><span style="font-size:14px;color:var(--text2)">${ex.unit==='tempo'?reps:'✓'}</span></div>`;else setsH+=`<div class="set-input"><span class="set-label">Série ${i+1}</span><input class="set-weight" type="number" inputmode="decimal" placeholder="—" value="${val}" data-ex="${ex.id}" data-set="${i}" onchange="onW(this)" onfocus="this.select()"><span class="set-unit">${ex.unit}</span></div>`}
     const fbRow=isBW?'':`<div class="feedback-row">${['heavy','good','light'].map(f=>`<button class="fb-btn${fb===f?' selected':''}" data-fb="${f}" onclick="setFb('${ex.id}','${f}',this)">${FB_L[f]}</button>`).join('')}</div>`;
     const swapBadge=ex.swapped?` <span style="font-size:10px;color:var(--amber)">(trocado)</span>`:'';
-    const grp=orig.grp||'peito';
+    const grp=ex.grp||orig.grp||'peito';
     html+=`<div class="exercise-card${dn?' completed':''}" id="card-${ex.id}">
       <div class="ex-top" onclick="toggleCard('${ex.id}',event)">
         <button class="ex-check" onclick="togEx('${ex.id}')">✓</button>
