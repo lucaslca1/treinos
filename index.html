@@ -81,6 +81,23 @@ body{padding-bottom:80px}
 .week-day.today .wd-num{color:var(--accent)}.week-day.done .wd-num{color:var(--green)}
 .streak-card{background:linear-gradient(135deg,rgba(139,122,255,.12),rgba(108,92,231,.08));border:1px solid rgba(139,122,255,.25);border-radius:var(--radius);padding:20px;text-align:center;margin:16px 0}
 .streak-num{font-size:48px;font-weight:700;color:var(--accent)}.streak-label{font-size:14px;color:var(--text2);margin-top:4px}
+.comp-section{margin:16px 0}
+.comp-title{font-size:15px;font-weight:600;margin-bottom:12px}
+.comp-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.comp-stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 8px;text-align:center}
+.comp-stat-num{font-size:22px;font-weight:700}.comp-stat-lbl{font-size:11px;color:var(--text2);margin-top:2px}
+.comp-stat.up .comp-stat-num{color:var(--green)}
+.comp-stat.same .comp-stat-num{color:var(--amber)}
+.comp-stat.down .comp-stat-num{color:var(--red)}
+.comp-gains{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px}
+.comp-gains-title{font-size:12px;color:var(--text2);margin-bottom:8px}
+.comp-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:13px}
+.comp-row:not(:last-child){border-bottom:1px solid rgba(42,42,53,.3)}
+.comp-ex{color:var(--text);flex:1}.comp-arrow{margin:0 8px;font-size:12px}
+.comp-up{color:var(--green)}.comp-down{color:var(--red)}.comp-same{color:var(--text3)}
+.comp-vol{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-top:8px;display:flex;justify-content:space-between;align-items:center}
+.comp-vol-label{font-size:13px;color:var(--text2)}.comp-vol-val{font-size:18px;font-weight:600}
+.comp-empty{color:var(--text3);font-size:13px;font-style:italic;padding:16px 0}
 .history-month{font-size:15px;font-weight:500;margin:20px 0 8px;color:var(--text2)}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:20px}
 .cal-head{font-size:11px;color:var(--text3);text-align:center;padding:4px 0}
@@ -179,6 +196,7 @@ body{padding-bottom:80px}
 <div class="screen" id="screen-history">
   <div class="header"><h1>Histórico</h1><p>Sua evolução semana a semana</p></div>
   <div class="streak-card"><div class="streak-num" id="streak-num">0</div><div class="streak-label">dias de sequência</div></div>
+  <div id="comp-area"></div>
   <button class="export-btn" onclick="toggleExport()">📋 Exportar semana para o personal</button>
   <div class="export-area" id="export-area"></div>
   <div id="calendar-area"></div>
@@ -560,7 +578,64 @@ function resetSched(){
   closeSchedEditor();rWeek();rToday();
 }
 function closeSchedEditor(){document.getElementById('sched-modal').classList.remove('show')}
-function rHist(){document.getElementById('streak-num').textContent=streak();let html='';for(let m=0;m<3;m++){const mo=new Date(today.getFullYear(),today.getMonth()-m,1);html+=`<div class="history-month">${mo.toLocaleDateString('pt-BR',{month:'long',year:'numeric'})}</div><div class="cal-grid">`;['D','S','T','Q','Q','S','S'].forEach(d=>html+=`<div class="cal-head">${d}</div>`);const fd=new Date(mo.getFullYear(),mo.getMonth(),1).getDay();for(let i=0;i<fd;i++)html+='<div class="cal-day"></div>';const dim=new Date(mo.getFullYear(),mo.getMonth()+1,0).getDate();for(let d=1;d<=dim;d++){const dt=new Date(mo.getFullYear(),mo.getMonth(),d),ds=fmt(dt);const dn=isDone(ds),isT=ds===todayStr,hw=getSch(dt.getDay()).type!=='rest';let c='cal-day';if(dn)c+=' done-day';else if(hw)c+=' has-workout';if(isT)c+=' today-cal';html+=`<div class="${c}">${d}</div>`}html+='</div>'}document.getElementById('calendar-area').innerHTML=html}
+function renderComp(){
+  const ws=wkStart(today),prevWs=new Date(ws);prevWs.setDate(prevWs.getDate()-7);
+  const allExList=EX.A.exercises.concat(EX.B.exercises,EX.C.exercises);
+  // Gather max weight per exercise for each week
+  function weekWeights(weekStart){
+    const w={};
+    for(let i=0;i<7;i++){
+      const d=new Date(weekStart);d.setDate(d.getDate()+i);const ds=fmt(d),log=gLog(ds);
+      if(!log.weights)continue;
+      for(const[exId,sets]of Object.entries(log.weights)){
+        const max=Math.max(...sets.filter(v=>v&&v>0));
+        if(max>0&&(!w[exId]||max>w[exId]))w[exId]=max;
+      }
+    }
+    return w;
+  }
+  const thisW=weekWeights(ws),lastW=weekWeights(prevWs);
+  const lastKeys=Object.keys(lastW);
+  if(lastKeys.length===0)return'<div class="comp-section"><div class="comp-title">Semana atual vs anterior</div><div class="comp-empty">Treine esta semana e a próxima pra ver a comparação.</div></div>';
+  let up=0,same=0,down=0,gains=[],losses=[];
+  const compared=new Set();
+  for(const exId of lastKeys){
+    if(!thisW[exId])continue;
+    compared.add(exId);
+    const diff=thisW[exId]-lastW[exId];
+    const ex=getEx(allExList.find(e=>e.id===exId)||{name:exId,id:exId});
+    if(diff>0){up++;gains.push({name:ex.name,from:lastW[exId],to:thisW[exId],diff})}
+    else if(diff<0){down++;losses.push({name:ex.name,from:lastW[exId],to:thisW[exId],diff})}
+    else{same++}
+  }
+  // Volume: total sets × max weight per exercise
+  function weekVol(w){let v=0;for(const kg of Object.values(w))v+=kg;return v}
+  const thisVol=weekVol(thisW),lastVol=weekVol(lastW);
+  const volDiff=lastVol>0?Math.round((thisVol-lastVol)/lastVol*100):0;
+  gains.sort((a,b)=>b.diff-a.diff);losses.sort((a,b)=>a.diff-b.diff);
+  let html='<div class="comp-section"><div class="comp-title">Semana atual vs anterior</div>';
+  html+=`<div class="comp-stats">
+    <div class="comp-stat up"><div class="comp-stat-num">${up}</div><div class="comp-stat-lbl">Subiram</div></div>
+    <div class="comp-stat same"><div class="comp-stat-num">${same}</div><div class="comp-stat-lbl">Mantiveram</div></div>
+    <div class="comp-stat down"><div class="comp-stat-num">${down}</div><div class="comp-stat-lbl">Desceram</div></div>
+  </div>`;
+  if(gains.length>0){
+    html+='<div class="comp-gains"><div class="comp-gains-title">Maiores ganhos</div>';
+    gains.slice(0,4).forEach(g=>{html+=`<div class="comp-row"><span class="comp-ex">${g.name}</span><span class="comp-up">${g.from}→${g.to}kg (+${g.diff})</span></div>`});
+    html+='</div>';
+  }
+  if(losses.length>0){
+    html+='<div class="comp-gains" style="margin-top:8px"><div class="comp-gains-title">Reduções</div>';
+    losses.slice(0,3).forEach(g=>{html+=`<div class="comp-row"><span class="comp-ex">${g.name}</span><span class="comp-down">${g.from}→${g.to}kg (${g.diff})</span></div>`});
+    html+='</div>';
+  }
+  if(thisVol>0&&lastVol>0){
+    const volColor=volDiff>=0?'var(--green)':'var(--red)';
+    html+=`<div class="comp-vol"><span class="comp-vol-label">Carga total da semana</span><span class="comp-vol-val" style="color:${volColor}">${volDiff>=0?'+':''}${volDiff}%</span></div>`;
+  }
+  html+='</div>';return html;
+}
+function rHist(){document.getElementById('streak-num').textContent=streak();document.getElementById('comp-area').innerHTML=renderComp();let html='';for(let m=0;m<3;m++){const mo=new Date(today.getFullYear(),today.getMonth()-m,1);html+=`<div class="history-month">${mo.toLocaleDateString('pt-BR',{month:'long',year:'numeric'})}</div><div class="cal-grid">`;['D','S','T','Q','Q','S','S'].forEach(d=>html+=`<div class="cal-head">${d}</div>`);const fd=new Date(mo.getFullYear(),mo.getMonth(),1).getDay();for(let i=0;i<fd;i++)html+='<div class="cal-day"></div>';const dim=new Date(mo.getFullYear(),mo.getMonth()+1,0).getDate();for(let d=1;d<=dim;d++){const dt=new Date(mo.getFullYear(),mo.getMonth(),d),ds=fmt(dt);const dn=isDone(ds),isT=ds===todayStr,hw=getSch(dt.getDay()).type!=='rest';let c='cal-day';if(dn)c+=' done-day';else if(hw)c+=' has-workout';if(isT)c+=' today-cal';html+=`<div class="${c}">${d}</div>`}html+='</div>'}document.getElementById('calendar-area').innerHTML=html}
 function toggleExport(){const a=document.getElementById('export-area');if(a.classList.contains('show')){a.classList.remove('show');return}const ws=wkStart(today);const swaps=getSwaps();let r=`📊 RELATÓRIO SEMANAL — Mesociclo Semana ${mesoWk()}\n`;r+=`${ws.toLocaleDateString('pt-BR',{day:'numeric',month:'short'})} a ${new Date(ws.getTime()+6*864e5).toLocaleDateString('pt-BR',{day:'numeric',month:'short'})}\n`;
   if(getCustomSched()){r+='\n📅 GRADE CUSTOMIZADA:\n';for(let i=0;i<7;i++){const s=getSch(i);r+=`  ${s.day}: ${s.label||'Descanso'}\n`}}
   if(Object.keys(swaps).length>0){r+='\n🔄 EXERCÍCIOS TROCADOS:\n';for(const[id,s]of Object.entries(swaps)){const orig=EX.A.exercises.concat(EX.B.exercises,EX.C.exercises).find(e=>e.id===id);if(orig)r+=`  ${orig.name} → ${s.name}\n`}};r+='\n';
