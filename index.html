@@ -189,6 +189,32 @@ body{padding-bottom:80px}
 .ex-history-bar .bar-tip{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--text3);white-space:nowrap;display:none}
 .ex-history-bar:hover .bar-tip,.ex-history-bar:last-child .bar-tip{display:block}
 .warmup-hint{font-size:11px;color:var(--amber);margin:6px 0 4px;line-height:1.4}
+/* === RUNNING TAB === */
+.run-card-list{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+.run-card-edit{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;transition:border-color .2s}
+.run-card-edit.custom{border-color:rgba(251,191,36,.3)}
+.rce-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.rce-name{font-size:16px;font-weight:600}
+.rce-badge{font-size:10px;padding:3px 8px;border-radius:6px;font-weight:500}
+.rce-badge.default{background:rgba(139,122,255,.12);color:var(--accent)}
+.rce-badge.custom-badge{background:rgba(251,191,36,.12);color:var(--amber)}
+.rce-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.rce-field{display:flex;flex-direction:column;gap:2px}
+.rce-field label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px}
+.rce-field input,.rce-field textarea{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-family:'Outfit';font-size:13px;outline:none}
+.rce-field textarea{resize:none;min-height:40px;grid-column:1/-1}
+.rce-field.full{grid-column:1/-1}
+.rce-actions{display:flex;gap:8px;margin-top:10px;justify-content:flex-end}
+.rce-btn{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-family:'Outfit';font-size:12px;cursor:pointer;color:var(--text2);transition:.2s}
+.rce-btn:active{transform:scale(.96)}
+.rce-btn.save{border-color:var(--green);color:var(--green)}
+.rce-btn.del{border-color:var(--red);color:var(--red)}
+.rce-btn.reset{border-color:var(--text3);color:var(--text3)}
+.add-run-btn{width:100%;padding:14px;border-radius:var(--radius-sm);border:1px dashed var(--amber);background:rgba(251,191,36,.04);font-family:'Outfit';font-size:14px;color:var(--amber);cursor:pointer;margin-top:12px;transition:.2s}
+.add-run-btn:active{background:rgba(251,191,36,.1)}
+.run-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px}
+.run-stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 8px;text-align:center}
+.run-stat-num{font-size:20px;font-weight:700;color:var(--amber)}.run-stat-lbl{font-size:11px;color:var(--text2);margin-top:2px}
 </style>
 </head>
 <body>
@@ -231,9 +257,27 @@ body{padding-bottom:80px}
 <div class="modal-overlay" id="swap-modal" onclick="closeSwapModal()"><div class="modal" onclick="event.stopPropagation()"><h3 id="swap-title">Trocar exercício</h3><p class="modal-sub" id="swap-sub"></p><div class="eq-filters" id="swap-grp-tabs" style="margin-bottom:8px"></div><div class="eq-filters" id="swap-filters"></div><div id="swap-list"></div><button class="modal-cancel" onclick="closeSwapModal()">Cancelar</button></div></div>
 <div class="modal-overlay" id="add-modal" onclick="closeAddModal()"><div class="modal" onclick="event.stopPropagation()"><h3>Adicionar exercício</h3><p class="modal-sub">Escolha o grupo muscular</p><div id="add-step1"></div><div id="add-step2" style="display:none"><p class="modal-sub" id="add-grp-name"></p><div class="eq-filters" id="add-filters"></div><div id="add-list"></div><button class="modal-cancel" onclick="addStep1()">&#8592; Voltar</button></div><button class="modal-cancel" onclick="closeAddModal()">Cancelar</button></div></div>
 <div class="modal-overlay" id="sched-modal" onclick="closeSchedEditor()"><div class="modal" onclick="event.stopPropagation()"><h3>Editar grade semanal</h3><p class="modal-sub">Configure musculação e corrida para cada dia</p><div id="sched-rows"></div><button class="modal-btn primary" onclick="saveSched()">Salvar grade</button><button class="sched-reset" onclick="resetSched()">Restaurar grade original</button><button class="modal-cancel" onclick="closeSchedEditor()">Cancelar</button></div></div>
+<div class="screen" id="screen-running">
+  <div class="header"><h1>Corrida</h1><p>Seus treinos de corrida</p></div>
+  <div class="run-stats" id="run-stats"></div>
+  <div class="run-card-list" id="run-card-list"></div>
+  <button class="add-run-btn" onclick="openNewRunModal()">+ Criar treino de corrida</button>
+</div>
+<div class="modal-overlay" id="newrun-modal" onclick="closeNewRunModal()"><div class="modal" onclick="event.stopPropagation()"><h3>Novo treino de corrida</h3><p class="modal-sub">Defina os parâmetros do treino</p>
+<div class="rce-fields">
+  <div class="rce-field"><label>Nome</label><input id="nr-name" placeholder="Ex: Intervalado curto"></div>
+  <div class="rce-field"><label>Distância</label><input id="nr-dist" placeholder="Ex: 5 km"></div>
+  <div class="rce-field"><label>Pace alvo</label><input id="nr-pace" placeholder="Ex: 5:30/km"></div>
+  <div class="rce-field"><label>FC alvo</label><input id="nr-hr" placeholder="Ex: Zona 3"></div>
+  <div class="rce-field full"><label>Observações</label><textarea id="nr-note" placeholder="Detalhes do treino..."></textarea></div>
+</div>
+<button class="modal-btn primary" style="margin-top:16px" onclick="saveNewRun()">Criar treino</button>
+<button class="modal-cancel" onclick="closeNewRunModal()">Cancelar</button>
+</div></div>
 <nav class="nav">
   <button class="active" onclick="sw('today',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Hoje</button>
   <button onclick="sw('week',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>Semana</button>
+  <button onclick="sw('running',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 4v4l4-2"/><path d="M7 8l-3 8h4l-2 6 8-10h-4l3-6z"/></svg>Corrida</button>
   <button onclick="sw('history',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 16l4-6 4 4 5-7"/></svg>Histórico</button>
 </nav>
 <script>
@@ -421,13 +465,14 @@ const DAYS_PT=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 function getCustomSched(){return ld('treino:custom-sched')||null}
 function getSch(dow){const c=getCustomSched();return c?c[dow]:SCHED[dow]}
 function buildSchedEntry(gym,run){
-  const day='';
-  let label='',sub='',type='rest';
-  if(gym&&run){type='both';label=EX[gym].name.replace('Treino ','')+' + '+RUNS[run].name.replace('Corrida ','');sub=EX[gym].sub+' + '+RUNS[run].dist}
+  var day='';
+  var label='',sub='',type='rest';
+  var rd=run?(typeof getRunDef==='function'?getRunDef(run):null)||RUNS[run]||{name:run,dist:'?'}:null;
+  if(gym&&run){type='both';label=EX[gym].name.replace('Treino ','')+' + '+rd.name.replace('Corrida ','');sub=EX[gym].sub+' + '+rd.dist}
   else if(gym){type='gym';label=EX[gym].name;sub=EX[gym].sub}
-  else if(run){type='run';label=RUNS[run].name;sub=RUNS[run].dist}
+  else if(run){type='run';label=rd.name;sub=rd.dist}
   else{type='rest';label='Descanso';sub='recuperar'}
-  return{day,type,label,sub,gym:gym||null,run:run||null};
+  return{day:day,type:type,label:label,sub:sub,gym:gym||null,run:run||null};
 }
 const MESO_H=['Semana 1 \u2014 Base: pesos default. Última rep difícil, forma perfeita.','Semana 2 \u2014 Subida: +1-2 reps por série, mesmo peso.','Semana 3 \u2014 Pico: +2,5kg compostos ou reps no topo da faixa.','Semana 4 \u2014 Deload: -40% peso, apenas 2 séries. Recupere.'];
 const FB_L={heavy:'\ud83d\ude24 Pesado',good:'\ud83d\udc4c Bom',light:'\ud83d\udd25 Leve'};
@@ -765,6 +810,130 @@ function toggleExport(){var a=document.getElementById('export-area');if(a.classL
   if(sc.run){r+='  \ud83c\udfc3 Corrida: '+(log.runDone?'\u2705':'\u274c');if(log.runFeedback)r+=' ['+FB_L[log.runFeedback]+']';if(log.runLog){if(log.runLog.pace)r+=' | Pace: '+log.runLog.pace+'/km';if(log.runLog.dist)r+=' | Dist: '+log.runLog.dist+'km';if(log.runLog.hr)r+=' | FC: '+log.runLog.hr+'bpm'}r+='\n'}
   if(log.notes)r+='  Notas: '+log.notes+'\n';r+='\n'}
   r+='Cole este relatório na conversa com o personal AI para ajustes.';a.textContent=r;a.classList.add('show');navigator.clipboard.writeText(r).catch(function(){});}
+// ========== RUNNING TAB ==========
+function getCustomRuns(){return ld('treino:custom-runs')||{}}
+function saveCustomRuns(obj){sv('treino:custom-runs',obj)}
+function getAllRuns(){
+  var custom=getCustomRuns();var merged={};
+  for(var k in RUNS)merged[k]={...RUNS[k],_default:true};
+  for(var k in custom)merged[k]={...custom[k],_default:false};
+  // Apply edits to defaults
+  var edits=ld('treino:run-edits')||{};
+  for(var k in edits){if(merged[k])Object.assign(merged[k],edits[k],{_edited:true})}
+  return merged;
+}
+function getRunDef(key){var all=getAllRuns();return all[key]||RUNS[key]||null}
+function saveRunEdit(key,field,val){
+  var edits=ld('treino:run-edits')||{};
+  if(!edits[key])edits[key]={};
+  edits[key][field]=val;
+  sv('treino:run-edits',edits);
+}
+function resetRunEdit(key){
+  var edits=ld('treino:run-edits')||{};
+  delete edits[key];sv('treino:run-edits',edits);
+  rRunning();
+}
+function deleteCustomRun(key){
+  var custom=getCustomRuns();delete custom[key];saveCustomRuns(custom);
+  var edits=ld('treino:run-edits')||{};delete edits[key];sv('treino:run-edits',edits);
+  rRunning();
+}
+function openNewRunModal(){
+  document.getElementById('nr-name').value='';
+  document.getElementById('nr-dist').value='';
+  document.getElementById('nr-pace').value='';
+  document.getElementById('nr-hr').value='';
+  document.getElementById('nr-note').value='';
+  document.getElementById('newrun-modal').classList.add('show');
+}
+function closeNewRunModal(){document.getElementById('newrun-modal').classList.remove('show')}
+function saveNewRun(){
+  var name=document.getElementById('nr-name').value.trim();
+  var dist=document.getElementById('nr-dist').value.trim();
+  var pace=document.getElementById('nr-pace').value.trim();
+  var hr=document.getElementById('nr-hr').value.trim();
+  var note=document.getElementById('nr-note').value.trim();
+  if(!name){alert('Dê um nome ao treino');return}
+  var key='custom_'+Date.now().toString(36);
+  var custom=getCustomRuns();
+  custom[key]={name:name,dist:dist||'?',pace:pace||'livre',hr:hr||'-',note:note||''};
+  saveCustomRuns(custom);
+  closeNewRunModal();rRunning();
+}
+function getRunStats(){
+  var totalRuns=0,totalKm=0,lastRun=null;
+  for(var i=0;i<90;i++){
+    var d=new Date(today);d.setDate(d.getDate()-i);var ds=fmt(d);var log=gLog(ds);
+    if(log.runDone){
+      totalRuns++;
+      if(!lastRun)lastRun=ds;
+      if(log.runLog&&log.runLog.dist)totalKm+=parseFloat(log.runLog.dist)||0;
+      else{var sc=getSch(d.getDay());if(sc.run){var r=getRunDef(sc.run);if(r)totalKm+=parseFloat(r.dist)||0}}
+    }
+  }
+  return{totalRuns:totalRuns,totalKm:Math.round(totalKm*10)/10,lastRun:lastRun};
+}
+function rRunning(){
+  var stats=getRunStats();
+  document.getElementById('run-stats').innerHTML='<div class="run-stat"><div class="run-stat-num">'+stats.totalRuns+'</div><div class="run-stat-lbl">corridas (90d)</div></div><div class="run-stat"><div class="run-stat-num">'+stats.totalKm+'</div><div class="run-stat-lbl">km total</div></div><div class="run-stat"><div class="run-stat-num">'+(stats.lastRun?stats.lastRun.split('-').reverse().slice(0,2).join('/'):'—')+'</div><div class="run-stat-lbl">última corrida</div></div>';
+  var all=getAllRuns();var html='';
+  for(var key in all){
+    var r=all[key];var isDefault=r._default&&!r._edited;var isCustom=!r._default;
+    var badge=isCustom?'<span class="rce-badge custom-badge">customizado</span>':(r._edited?'<span class="rce-badge custom-badge">editado</span>':'<span class="rce-badge default">padrão</span>');
+    html+='<div class="run-card-edit'+(isCustom?' custom':'')+'"><div class="rce-top"><span class="rce-name">'+r.name+'</span>'+badge+'</div>';
+    html+='<div class="rce-fields">';
+    html+='<div class="rce-field"><label>Distância</label><input value="'+(r.dist||'')+'" onchange="saveRunEdit(\''+key+'\',\'dist\',this.value)"></div>';
+    html+='<div class="rce-field"><label>Pace alvo</label><input value="'+(r.pace||'')+'" onchange="saveRunEdit(\''+key+'\',\'pace\',this.value)"></div>';
+    html+='<div class="rce-field"><label>FC alvo</label><input value="'+(r.hr||'')+'" onchange="saveRunEdit(\''+key+'\',\'hr\',this.value)"></div>';
+    html+='<div class="rce-field"><label>Nome</label><input value="'+r.name+'" onchange="saveRunEdit(\''+key+'\',\'name\',this.value)"></div>';
+    html+='<div class="rce-field full"><label>Observações</label><textarea onchange="saveRunEdit(\''+key+'\',\'note\',this.value)">'+(r.note||'')+'</textarea></div>';
+    html+='</div>';
+    html+='<div class="rce-actions">';
+    if(r._edited&&r._default)html+='<button class="rce-btn reset" onclick="resetRunEdit(\''+key+'\')">Restaurar padrão</button>';
+    if(isCustom)html+='<button class="rce-btn del" onclick="if(confirm(\'Excluir '+r.name.replace(/'/g,"\\'")+' ?\'))deleteCustomRun(\''+key+'\')">Excluir</button>';
+    html+='</div></div>';
+  }
+  document.getElementById('run-card-list').innerHTML=html;
+}
+
+// Override sw to handle running tab
+var _origSw=sw;
+sw=function(n,b){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});
+  document.getElementById('screen-'+n).classList.add('active');
+  document.querySelectorAll('.nav button').forEach(function(x){x.classList.remove('active')});
+  if(b)b.classList.add('active');
+  if(n==='today')rToday();if(n==='week')rWeek();if(n==='history')rHist();if(n==='running')rRunning();
+};
+
+// Update buildRunHtml to use getAllRuns for custom run data
+var _origBuildRunHtml=buildRunHtml;
+buildRunHtml=function(runKey,ds){
+  var r=getRunDef(runKey)||RUNS[runKey];if(!r)return'';
+  var log=gLog(ds);var rfb=log.runFeedback||'';var rd=log.runDone||false;var rl=log.runLog||{};
+  var html='<div class="run-info" style="margin-top:8px"><h3 style="color:var(--amber)">\ud83c\udfc3 '+r.name+' \u2014 '+r.dist+'</h3><div class="run-row">Pace <span>'+r.pace+'</span></div><div class="run-row">FC <span>'+r.hr+'</span></div><div class="run-row" style="border-top:1px solid var(--border);padding-top:10px;margin-top:6px;font-size:13px;color:var(--text3)">'+r.note+'</div><div class="run-row" style="font-size:12px;color:var(--text3)">\u26a0 Joelho/canela: cadência ~175spm, passada curta</div>';
+  html+='<button class="run-done-btn'+(rd?' checked':'')+'" id="run-done-btn" onclick="toggleRunDone()">'+(rd?'\u2713 Corrida feita':'\u25cb Marcar corrida como feita')+'</button>';
+  html+='<div class="run-inputs"><div class="run-input"><label>Pace real</label><input type="text" placeholder="5:30" value="'+(rl.pace||'')+'" onchange="saveRunLog(\'pace\',this.value)"><div class="ri-unit">min/km</div></div><div class="run-input"><label>Distância</label><input type="number" inputmode="decimal" placeholder="'+parseFloat(r.dist)+'" value="'+(rl.dist||'')+'" onchange="saveRunLog(\'dist\',this.value)"><div class="ri-unit">km</div></div><div class="run-input"><label>FC média</label><input type="number" inputmode="numeric" placeholder="140" value="'+(rl.hr||'')+'" onchange="saveRunLog(\'hr\',this.value)"><div class="ri-unit">bpm</div></div></div>';
+  html+='<div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(42,42,53,.5)"><div style="font-size:12px;color:var(--text3);margin-bottom:6px">Como foi a corrida?</div><div class="feedback-row" style="margin-top:0;padding-top:0;border-top:none">'+['heavy','good','light'].map(function(f){return'<button class="fb-btn'+(rfb===f?' selected':'')+'" data-fb="'+f+'" onclick="setRunFb(\''+f+'\',this)">'+FB_L[f]+'</button>'}).join('')+'</div></div></div>';
+  return html;
+};
+
+// Update schedule editor to show custom runs too
+var _origOpenSchedEditor=openSchedEditor;
+openSchedEditor=function(){
+  var allR=getAllRuns();
+  var html='';
+  for(var i=0;i<7;i++){
+    var s=getSch(i);
+    var runOpts='<option value="">Sem corrida</option>';
+    for(var rk in allR){runOpts+='<option value="'+rk+'"'+(s.run===rk?' selected':'')+'>'+allR[rk].name+' '+allR[rk].dist+'</option>'}
+    html+='<div class="sched-row"><span class="sched-day">'+DAYS_PT[i]+'</span><div class="sched-selects"><select class="sched-sel" id="sched-gym-'+i+'"><option value="">Sem musculação</option><option value="A"'+(s.gym==='A'?' selected':'')+'>Treino A \u2014 Peito+Tríceps</option><option value="B"'+(s.gym==='B'?' selected':'')+'>Treino B \u2014 Costas+Bíceps</option><option value="C"'+(s.gym==='C'?' selected':'')+'>Treino C \u2014 Ombros+Core</option><option value="D"'+(s.gym==='D'?' selected':'')+'>Treino D \u2014 Pernas</option></select><select class="sched-sel" id="sched-run-'+i+'">'+runOpts+'</select></div></div>';
+  }
+  document.getElementById('sched-rows').innerHTML=html;
+  document.getElementById('sched-modal').classList.add('show');
+};
+
 if(!ld('treino:meso:start'))setMesoSt(todayStr);rToday();
 </script>
 </body>
