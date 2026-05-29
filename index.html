@@ -288,6 +288,55 @@ body{background:radial-gradient(1100px 460px at 100% -8%,rgba(139,122,255,.12),t
 .bw-card,.backup-card,.comp-gains,.comp-stat,.comp-vol,.run-stat{box-shadow:var(--shadow-sm)}
 #theme-btn svg{transition:transform .4s}
 :root[data-theme="light"] #theme-btn svg{transform:rotate(180deg)}
+/* ===== v3: estilo Apple (iOS) ===== */
+body,button,input,textarea,select{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue",Arial,sans-serif!important;letter-spacing:-.01em}
+:root{--radius:16px;--radius-sm:11px;
+  --bg:#000000;--card:#1C1C1E;--card2:#2C2C2E;
+  --accent:#0A84FF;--accent2:#0A84FF;
+  --green:#30D158;--amber:#FF9F0A;--red:#FF453A;--blue:#64D2FF;
+  --text:#FFFFFF;--text2:#98989F;--text3:#636366;--border:#38383A;
+  --grad:linear-gradient(#0A84FF,#0A84FF);--grad-amber:linear-gradient(#FF9F0A,#FF9F0A);--grad-green:linear-gradient(#30D158,#30D158);
+  --grad-soft:linear-gradient(135deg,rgba(10,132,255,.16),rgba(10,132,255,.16));
+  --shadow:0 8px 24px rgba(0,0,0,.5);--shadow-sm:none;--glow:0 0 0 2px var(--accent);
+  --nav-bg:rgba(20,20,22,.8);--timer-bg:rgba(28,28,30,.92)}
+:root[data-theme="light"]{
+  --bg:#F2F2F7;--card:#FFFFFF;--card2:#EFEFF4;
+  --accent:#007AFF;--accent2:#007AFF;
+  --green:#34C759;--amber:#FF9500;--red:#FF3B30;--blue:#5AC8FA;
+  --text:#000000;--text2:#6C6C70;--text3:#AEAEB2;--border:#D8D8DD;
+  --grad:linear-gradient(#007AFF,#007AFF);--grad-amber:linear-gradient(#FF9500,#FF9500);--grad-green:linear-gradient(#34C759,#34C759);
+  --grad-soft:linear-gradient(135deg,rgba(0,122,255,.10),rgba(0,122,255,.10));
+  --shadow:0 8px 24px rgba(60,60,90,.10);--shadow-sm:0 1px 3px rgba(0,0,0,.06);--glow:0 0 0 2px var(--accent);
+  --nav-bg:rgba(249,249,251,.82);--timer-bg:rgba(255,255,255,.92)}
+body{background:var(--bg)}
+.header h1{font-size:34px;font-weight:700;letter-spacing:-.6px}
+.header h1:not(#greeting){background:none;-webkit-text-fill-color:var(--text)}
+.nav button.active::before{display:none}
+.nav button.active{color:var(--accent)}
+.nav button.active svg{transform:none}
+.meso-pill{background:var(--card);border-color:var(--border);box-shadow:none}
+.meso-pill .dot{box-shadow:none}
+.meso-pill .week{color:var(--accent)}
+.wc-badge.gym{background:rgba(10,132,255,.16);color:var(--accent)}
+.wc-badge.run{background:rgba(255,159,10,.16);color:var(--amber)}
+.wc-badge.done-badge{background:rgba(48,209,88,.16);color:var(--green)}
+.complete-btn.ready{background:var(--green);color:#fff;border-color:transparent}
+.modal-btn.primary{background:var(--accent);color:#fff}
+.apply-all,.bw-input-row button{background:var(--accent);color:#fff}
+.ex-target{color:var(--accent)}
+.streak-card{background:var(--grad-soft);box-shadow:none}
+.streak-num{background:none;-webkit-text-fill-color:var(--accent)}
+.week-day.today{box-shadow:var(--glow);border-color:transparent}
+@media(hover:hover){.workout-card:hover{transform:none;box-shadow:var(--shadow-sm);border-color:var(--accent)}}
+.workout-card:active{transform:scale(.99)}
+.eq-filter.active{border-color:var(--accent);color:var(--accent);background:rgba(10,132,255,.12)}
+.swap-item.current{border-color:var(--accent);background:rgba(10,132,255,.10)}
+.swap-badge{color:var(--accent);background:rgba(10,132,255,.16)}
+.prog-hint{background:rgba(10,132,255,.10);border-color:rgba(10,132,255,.25);color:var(--accent)}
+.tip-box{background:rgba(10,132,255,.07);border-color:rgba(10,132,255,.16)}
+.load-sug{background:rgba(10,132,255,.08);border-color:rgba(10,132,255,.22);color:var(--accent)}
+.load-sug b{color:var(--text)}
+button,.workout-card,.exercise-card,.week-day{transition:.18s ease}
 </style>
 </head>
 <body>
@@ -1136,7 +1185,7 @@ if(!ld('treino:migr:run-spacing-v1')){
     if(_oldPattern){sv('treino:custom-sched',SCHED.map(function(s){return Object.assign({},s)}))}
   }
 }
-function applyTheme(t){t=(t==='light')?'light':'dark';document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content',t==='light'?'#F3F4FB':'#0a0a0f');sv('treino:theme',t)}
+function applyTheme(t){t=(t==='light')?'light':'dark';document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content',t==='light'?'#F2F2F7':'#000000');sv('treino:theme',t)}
 function toggleTheme(){applyTheme(ld('treino:theme')==='light'?'dark':'light')}
 applyTheme(ld('treino:theme')||'dark');
 if(!ld('treino:meso:start'))setMesoSt(todayStr);rToday();
