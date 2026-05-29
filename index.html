@@ -337,6 +337,32 @@ body{background:var(--bg)}
 .load-sug{background:rgba(10,132,255,.08);border-color:rgba(10,132,255,.22);color:var(--accent)}
 .load-sug b{color:var(--text)}
 button,.workout-card,.exercise-card,.week-day{transition:.18s ease}
+/* ===== v4: premium teal ===== */
+:root{--radius:18px;--radius-sm:12px;
+  --bg:#0B0B0D;--card:#161618;--card2:#202023;
+  --accent:#00C7BE;--accent2:#00C7BE;--text:#F5F5F7;--text2:#9A9AA0;--text3:#5E5E64;--border:#2A2A2E;
+  --grad:linear-gradient(#00C7BE,#00C7BE);--grad-soft:linear-gradient(135deg,rgba(0,199,190,.16),rgba(0,199,190,.16));
+  --glow:0 0 0 2px var(--accent)}
+:root[data-theme="light"]{
+  --bg:#F5F5F7;--card:#FFFFFF;--card2:#ECECF0;
+  --accent:#00897F;--accent2:#00897F;--text:#0B0B0D;--text2:#6A6A70;--text3:#AEAEB4;--border:#DCDCE2;
+  --grad:linear-gradient(#00897F,#00897F);--grad-soft:linear-gradient(135deg,rgba(0,137,127,.10),rgba(0,137,127,.10))}
+body{background:radial-gradient(900px 380px at 50% -10%,rgba(0,199,190,.06),transparent 60%),var(--bg)}
+.screen{padding:20px 18px 24px}
+.header{padding:18px 0 6px}.header h1{font-size:34px;letter-spacing:-.7px}.header p{margin-top:4px}
+.workout-card{padding:18px;margin-bottom:14px}
+.exercise-card{margin-bottom:10px}
+.meso-pill{margin:14px 0 20px;padding:7px 16px}
+.wc-title{margin:12px 0 4px}
+.wc-badge.gym{background:rgba(0,199,190,.18);color:var(--accent)}
+.eq-filter.active{border-color:var(--accent);color:var(--accent);background:rgba(0,199,190,.12)}
+.swap-item.current{border-color:var(--accent);background:rgba(0,199,190,.10)}
+.swap-badge{color:var(--accent);background:rgba(0,199,190,.16)}
+.prog-hint{background:rgba(0,199,190,.10);border-color:rgba(0,199,190,.25);color:var(--accent)}
+.tip-box{background:rgba(0,199,190,.07);border-color:rgba(0,199,190,.16)}
+.load-sug{background:rgba(0,199,190,.08);border-color:rgba(0,199,190,.22);color:var(--accent)}
+.complete-btn.ready,.modal-btn.primary,.apply-all,.bw-input-row button{background:var(--accent);color:#04211f}
+:root[data-theme="light"] .complete-btn.ready,:root[data-theme="light"] .modal-btn.primary,:root[data-theme="light"] .apply-all,:root[data-theme="light"] .bw-input-row button{color:#fff}
 </style>
 </head>
 <body>
@@ -1185,7 +1211,7 @@ if(!ld('treino:migr:run-spacing-v1')){
     if(_oldPattern){sv('treino:custom-sched',SCHED.map(function(s){return Object.assign({},s)}))}
   }
 }
-function applyTheme(t){t=(t==='light')?'light':'dark';document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content',t==='light'?'#F2F2F7':'#000000');sv('treino:theme',t)}
+function applyTheme(t){t=(t==='light')?'light':'dark';document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content',t==='light'?'#F5F5F7':'#0B0B0D');sv('treino:theme',t)}
 function toggleTheme(){applyTheme(ld('treino:theme')==='light'?'dark':'light')}
 applyTheme(ld('treino:theme')||'dark');
 if(!ld('treino:meso:start'))setMesoSt(todayStr);rToday();
