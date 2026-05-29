@@ -1,0 +1,5 @@
+index.backup-*.html
+index.txt
+deploy-github.sh
+*.bak
+.DS_Store
